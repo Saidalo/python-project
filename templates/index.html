@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block main %}
+{% load tags %}
+<h2>My Wiki application</h2>
+<input class="form-control basicAutoComplete" type="text" autocomplete="off">
+<ul class="list-group">
+    {% for w in allWikis %}
+        <li class="list-group-item {% random_class %}">
+            <div class="container">
+                <div class="row">
+                    <div class="col" id="wiki-name-{{w.id}}">
+                        {{w.name}}
+                    </div>
+                    <div class="col" id="wiki-topic-{{w.id}}">
+                        {{w.topic}}
+                    </div>
+                    <div class="col">
+                        <button type="button" class="btn btn-warning" id="wiki-edit" data-id="{{w.id}}">Edit</button>
+                    </div>
+                </div>
+            </div>
+        </li>
+    {% endfor %}
+
+    <li class="list-group-item {% random_class %}">
+        <button type="button" class="btn btn-info" onclick="location.href='/wiki/new'">Add Wiki</button>
+    </li>
+</ul>
+
+<script>
+    $('button#wiki-edit').on('click', function() {
+        var wikiId = $(this).data('id');
+        var name = $(`#wiki-name-${wikiId}`).val();
+        var topic = $(`#wiki-topic-${wikiId}`).val();
+        location.href = `/wiki/${wikiId}/edit`
+    })
+
+    $('.basicAutoComplete').autoComplete({
+        resolverSettings: {
+            url: '/search'
+        }
+    });
+
+    $('.basicAutoComplete').select(function(evt, item) {
+        console.log(item);
+    })
+</script>
+{% endblock %}

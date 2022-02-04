@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block main %}
+<h3>Create new wiki</h3>
+<div class="container-fluid">
+  <div class="mb-3">
+    <label for="wiki-name" class="form-label">Wiki name</label>
+    <input type="text" class="form-control" id="wiki-name" placeholder="WW1 Wiki"
+    {% if edit %} value="{{wiki.name}}" {% endif %}
+    >
+  </div>
+  <div class="mb-3">
+    <label for="wiki-topic" class="form-label">Example textarea</label>
+    {% if edit %}
+    <textarea class="form-control" id="wiki-topic" rows="3">{{wiki.topic}}</textarea>
+    {% else %}
+    <textarea class="form-control" id="wiki-topic" rows="3"></textarea>
+    {% endif %}
+  </div>
+  {% if edit %}
+    <input type="hidden" id="wiki-id" value="{{wiki.id}}" />
+    <button type="button" class="btn btn-info" id="edit">Save</button>
+  {% else %}
+    <button type="button" class="btn btn-info" id="create">Add Wiki</button>
+  {% endif %}
+
+</div>
+<script>
+  $('button#edit').on('click', function() {
+    var name = $('#wiki-name').val();
+    var topic = $('#wiki-topic').val();
+    var wikiId = $('#wiki-id').val();
+    $.ajax({
+      url: '/create',
+      type: 'PUT',
+      data: {'name': name, 'topic': topic, 'wikiId': wikiId},
+      success: function (data) {
+        location.href='/';
+      }
+    });
+  });
+
+  $('button#create').on('click', function() {
+    var name = $('#wiki-name').val();
+    var topic = $('#wiki-topic').val();
+
+    var headers = new Headers();
+    $.ajax({
+      url: '/create',
+      type: 'POST',
+      data: {'name': name, 'topic': topic},
+      headers: headers,
+      success: function (data) {
+        location.href='/';
+      }
+    });
+  });
+</script>
+{% endblock %}
